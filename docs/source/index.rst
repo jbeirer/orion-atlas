@@ -3,7 +3,7 @@ Welcome to the Orion in ATLAS documentation!
 
 These pages document the recommended usage of Orion within the ATLAS/CERN 
 infrastructure and is intended to help you get started. If this is the first time
-you are using Orion, please first take a look at the `Orion documentation`_ 
+you are using Orion, please first take a look at the `Orion documentation`_.
 
 
 What is Orion?
@@ -43,7 +43,7 @@ What is the recommended usage of Orion in ATLAS?
 ------------------------------------------------
 
 For small-scale optimization problems or tests, you should use the standard instructions
-provided in the `Orion documentation`_ . However, 
+provided in the `Orion documentation`_. However, 
 for large-scale optimizations, and if you want to profit from the distributed capabilities
 of Orion a few things will need to be set up first. This documentation will guide you through
 the necessary steps. 
@@ -57,15 +57,21 @@ As mentioned, the workers make a decision based on a shared common database (DB)
 as Orion workers, the jobs need to have continuous access to a shared database. Keep in mind that HTCondor jobs
 are isolated from the outside world (and this for good reason!), such that we are not able to use cloud-hosted
 DB services such as Amazon Web Services (AWS). Instead, we can host our own database on a virtual machine (VM)
-using CERN OpenStack Resources. While Orion supports a variety of different database, MongoDB, a document-based
+using `CERN OpenStack resources`_. While Orion supports a variety of different database, MongoDB, a document-based
 NoSQL database is the recommended backend for large-scale parallel optimizations, where the number of workers gets higher than 50. 
 You can find out more about the database in the `MongoDB documentation`_.
 
 
+
+
+..
+   Links
+..
 .. _Orion documentation: https://orion.readthedocs.io
 .. _executor backends: https://orion.readthedocs.io/en/stable/user/parallel.html
 .. _Dask documentation: https://docs.dask.org/en/stable/
 .. _MongoDB documentation: https://docs.mongodb.com/
+.. _CERN OpenStack resources: https://clouddocs.web.cern.ch/index.html
 
 
 
