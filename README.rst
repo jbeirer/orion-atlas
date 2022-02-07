@@ -1,9 +1,7 @@
-Template for the Read the Docs tutorial
+Read the Docs for Orion usage in ATLAS
 =======================================
 
-This GitHub template includes fictional Python library
-with some basic Sphinx docs.
+This repository holds a guide showing how to use Orion, a distributed black-box optimizer, 
+within the computing infrastructure of the ATLAS experiment at CERN.
 
-Read the tutorial here:
-
-https://docs.readthedocs.io/en/stable/tutorial/
+Find the docs at https://orion-atlas.readthedocs.io/en/latest/
