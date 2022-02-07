@@ -1,4 +1,4 @@
-Welcome to the Orion in ATLAS documentation!
+Orion in ATLAS
 ==============================================
 
 These pages document the recommended usage of Orion within the ATLAS/CERN 
@@ -57,12 +57,13 @@ As mentioned, the workers make a decision based on a shared common database (DB)
 as Orion workers, the jobs need to have continuous access to a shared database. Keep in mind that HTCondor jobs
 are isolated from the outside world (and this for good reason!), such that we are not able to use cloud-hosted
 DB services such as Amazon Web Services (AWS). Instead, we can host our own database on a virtual machine (VM)
-using `CERN OpenStack resources`_. While Orion supports a variety of different database, MongoDB, a document-based
+using `CERN OpenStack resources`_, which can be reached within the network by the HTCondor jobs. While Orion supports a variety of different database, MongoDB, a document-based
 NoSQL database is the recommended backend for large-scale parallel optimizations, where the number of workers gets higher than 50. 
-You can find out more about the database in the `MongoDB documentation`_.
+You can find out more about the database in the `MongoDB documentation`_. You can follow these (easy) steps to get a working set-up:
 
-
-
+1. :ref:`Set-up a VM using CERN OpenStack resources<vm>`
+2. Set-up a MongoDB instance on the VM
+3. Configure Orion
 
 ..
    Links
