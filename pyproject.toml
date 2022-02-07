@@ -4,5 +4,5 @@ build-backend = "flit_core.buildapi"
 
 [project]
 name = "orion-atlas"
-authors = [{name = "Graziella", email = "jbeirer@cern.ch"}]
+authors = [{name = "The ATLAS Collaboration", email = "jbeirer@cern.ch"}]
 dynamic = ["version", "description"]
