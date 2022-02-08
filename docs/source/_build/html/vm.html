@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Setting up your Virtual Machine &mdash; Orion in ATLAS 0.1 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="&lt;no title&gt;" href="db.html" />
+    <link rel="prev" title="Orion in ATLAS" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> Orion in ATLAS
+          </a>
+              <div class="version">
+                0.1.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Welcome</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Setting up your Virtual Machine</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#configuring-the-vm-for-mongodb-usage">Configuring the VM for MongoDB usage</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Orion in ATLAS</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Setting up your Virtual Machine</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/vm.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="setting-up-your-virtual-machine">
+<span id="vm"></span><h1>Setting up your Virtual Machine<a class="headerlink" href="#setting-up-your-virtual-machine" title="Permalink to this headline"></a></h1>
+<p>In order to set up you personal virtual machine (VM), please follow
+the <a class="reference external" href="https://clouddocs.web.cern.ch/tutorial_using_a_browser/create_a_virtual_machine.html">CERN OpenStack tutorial</a> on how to create a personal linux VM. As MongoDB likes consuming memory (see the <a class="reference external" href="https://docs.mongodb.com/manual/faq/storage/">storage section</a> in the MongoDB docs),
+make sure to choose the m.large flavour to avoid memory issues later on. Also see the chapter on creating a sharded cluster to further alleviate memory pressure, if required.</p>
+<section id="configuring-the-vm-for-mongodb-usage">
+<h2>Configuring the VM for MongoDB usage<a class="headerlink" href="#configuring-the-vm-for-mongodb-usage" title="Permalink to this headline"></a></h2>
+<p>In order to avoid potential problems with using MongoDB on your VM, the following
+configuration is strongly recommended:</p>
+<p><strong>1. Create a swap space to prevent Out-of-memory (OOM) kills from the Linux kernel.</strong>
+A swap file is used to swap memory from RAM to disk in case the memory consumption comes close to the available RAM. This is useful to avoid the Linux kernel from killing your MongoDB instance if you (temporarily) come close to the memory threshold. However, note that writing on disk is significantly slower than RAM performance, such that if your database uses the swap for an extended period of time, it will likely crash. To create a swap file of 1Gb you can:</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ sudo dd <span class="k">if</span><span class="o">=</span>/dev/zero <span class="nv">of</span><span class="o">=</span>/swapfile <span class="nv">count</span><span class="o">=</span><span class="m">1024</span> <span class="nv">bs</span><span class="o">=</span>1MiB
+$ sudo chmod <span class="m">600</span> /swapfile
+$ sudo mkswap /swapfile
+$ sudo swapon /swapfile
+</pre></div>
+</div>
+</div></blockquote>
+<p>In order to keep the swapfile active on re-boot, add</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$  /swapfile none swap sw <span class="m">0</span> <span class="m">0</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>in the <code class="docutils literal notranslate"><span class="pre">/etc/fstab</span></code> configuration file.</p>
+<p><strong>Further recommendations</strong></p>
+<ul>
+<li><p>Set the swappiness to one by adding <code class="docutils literal notranslate"><span class="pre">vm.swappiness=1</span></code> to the <code class="docutils literal notranslate"><span class="pre">/etc/sysctl.conf</span></code> configuration file. This will tell the system to avoid swapping whenever possible, which is the most performant option for MongoDB.</p></li>
+<li><p>Tell the system not to commit more virtual address space than swap space plus a faction of the overcommit ratio with</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$  <span class="nb">echo</span> <span class="s2">&quot;2&quot;</span> &gt; /proc/sys/vm/overcommit_memory
+$  <span class="nb">echo</span> <span class="s2">&quot;80&quot;</span> &gt; /proc/sys/vm/overcommit_ratio
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ul>
+<p>The overcommit setting controls what happens when processes request too much memory from the operating system. Depending on the setting, the kernal may give memory to processes even it is actually not available. The standard settings do not work well with MongoDB.</p>
+<p><strong>2. Increase the maximum number of allowed open file descriptors and other Unix related limits.</strong> Linux imposes certain limits on the amount of various system resources available to a user process. These limitations include how many files a process can have open, how large of a file the user can create, and how much memory can be used by the different components of the process such as the stack, data and text segments. You can check some of those limits using</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$  <span class="nb">ulimit</span> -a
+</pre></div>
+</div>
+</div></blockquote>
+<p>Some of these limits will negatively impact the performance or might even lead to crashes of your MongoDB instance. For instance, if the number of open file descriptors <code class="docutils literal notranslate"><span class="pre">open</span> <span class="pre">files</span></code> exceeds the limit imposed by the kernel, your DB will crash with a <code class="docutils literal notranslate"><span class="pre">Too</span> <span class="pre">many</span> <span class="pre">open</span> <span class="pre">files</span></code> error. In order to pevent this and other issues, the following settings are recommended:</p>
+<ol class="arabic simple">
+<li><p>Increase the maximum number of file handles that the Linux kernel will allocate to the maximum by adding <code class="docutils literal notranslate"><span class="pre">fs.file-max=2147483584</span></code> to the <code class="docutils literal notranslate"><span class="pre">/etc/sysctl.conf</span></code> config file (the default setting allows a total of 715 428 file handles). In order for the changes to take effect, run <code class="docutils literal notranslate"><span class="pre">sysctl</span> <span class="pre">-p</span></code>. You should see the new configuration appear in <code class="docutils literal notranslate"><span class="pre">/proc/sys/fs/file-max</span></code>.</p></li>
+<li><p>Increase the maximum number of memory map areas a process may have by setting <code class="docutils literal notranslate"><span class="pre">vm.max_map_count=268431360</span></code> in the <code class="docutils literal notranslate"><span class="pre">/etc/sysctl.conf</span></code> config file. In order for the changes to take effect, run <code class="docutils literal notranslate"><span class="pre">sysctl</span> <span class="pre">-p</span></code>.</p></li>
+<li><p>Increase the hard and soft limits of open file descriptors to 1048576 (default 1024) in <code class="docutils literal notranslate"><span class="pre">/etc/security/limits.conf</span></code>.</p></li>
+<li><p>Increase the maximum number of threads in <code class="docutils literal notranslate"><span class="pre">/proc/sys/kernel/threads-max</span></code> to 1048576 (default 56800).</p></li>
+<li><p>Increase the maximum number of a PID in <code class="docutils literal notranslate"><span class="pre">/proc/sys/kernel/pid_max</span></code> to 4194304 (default 32768).</p></li>
+</ol>
+<p>You can find more information on the recommended MongoDB Unix limit settings in the <a class="reference external" href="https://docs.mongodb.com/manual/reference/ulimit/">ulimit section</a> of the MongoDB documentation. Please note that there are also further limit settings which need to be sonfigured on the MongoDB side. Please see the section on how to <a class="reference internal" href="db.html#db"><span class="std std-ref">set-up a MongoDB instance on the VM</span></a> for more information.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="Orion in ATLAS" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="db.html" class="btn btn-neutral float-right" title="&lt;no title&gt;" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, The ATLAS Collaboration.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

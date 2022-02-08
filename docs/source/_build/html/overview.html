@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Orion in ATLAS &mdash; Orion in ATLAS 0.1 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> Orion in ATLAS
+          </a>
+              <div class="version">
+                0.1.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Welcome</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="vm.html">Setting up your Virtual Machine</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Orion in ATLAS</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Orion in ATLAS</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/overview.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="orion-in-atlas">
+<h1>Orion in ATLAS<a class="headerlink" href="#orion-in-atlas" title="Permalink to this headline"></a></h1>
+<p>These pages document the recommended usage of Orion within the ATLAS/CERN
+infrastructure and is intended to help you get started. If this is the first time
+you are using Orion, please first take a look at the <a class="reference external" href="https://orion.readthedocs.io">Orion documentation</a>.</p>
+<section id="what-is-orion">
+<h2>What is Orion?<a class="headerlink" href="#what-is-orion" title="Permalink to this headline"></a></h2>
+<p>Oríon is an asynchronous framework for black-box function optimization.</p>
+<p>Its purpose is to serve as a meta-optimizer for machine learning models
+and training, as well as a flexible experimentation
+platform for large scale asynchronous optimization procedures.</p>
+<p>Core design value is the minimum disruption of a researcher’s workflow.
+It allows fast and efficient tuning, providing minimum simple non-intrusive
+(not even necessary!) helper <em>client</em> interface for a user’s script.</p>
+</section>
+<section id="how-will-orion-simplify-your-life">
+<h2>How will Orion simplify your life?<a class="headerlink" href="#how-will-orion-simplify-your-life" title="Permalink to this headline"></a></h2>
+<p>The optimization of hyperparameters in ML models is a classical example of
+a black-box optimization problem, which in general is a cumbersome and time-consuming
+activity and in some cases requires significant computing resources. Orion will allow
+you to provide a simple user script which is expected to return some kind of metric,
+which Orion will aim to minimize. This means that you will not be required to significantly
+modify your current workflow and simply continue using the scripts you are already using
+to train your ML models.</p>
+<p>While you can use Orion on your local machine or on lxplus, the real power of
+Orion unfolds when using its distributed capabilities. Orion cannot only be run
+on multiple cores, but it can distribute its optimization procedure across multiple
+machines. As many Orion workers as required can be launched to simultanously work on
+an optimization problem. The individual workers make decisions based on a common shared
+database. Operations in the database are non-blocking, ensuring horizontal scalability
+for large search spaces.</p>
+</section>
+<section id="what-is-the-recommended-usage-of-orion-in-atlas">
+<h2>What is the recommended usage of Orion in ATLAS?<a class="headerlink" href="#what-is-the-recommended-usage-of-orion-in-atlas" title="Permalink to this headline"></a></h2>
+<p>For small-scale optimization problems or tests, you should use the standard instructions
+provided in the <a class="reference external" href="https://orion.readthedocs.io">Orion documentation</a>. However,
+for large-scale optimizations, and if you want to profit from the distributed capabilities
+of Orion a few things will need to be set up first. This documentation will guide you through
+the necessary steps.</p>
+<p>The general idea is to use HTCondor jobs submitted through lxplus as Orion workers. Orion
+supports various <a class="reference external" href="https://orion.readthedocs.io/en/stable/user/parallel.html">executor backends</a>. In order to use HTCondor jobs as Orion workers, we will employ Dask, an open source library for parallel
+computing written in Python, as a backend in order to spawn the workers and keep them alive. For more information on Dask,
+please take a look at the <a class="reference external" href="https://docs.dask.org/en/stable/">Dask documentation</a>.</p>
+<p>As mentioned, the workers make a decision based on a shared common database (DB). If we want to use HTCondor jobs
+as Orion workers, the jobs need to have continuous access to a shared database. Keep in mind that HTCondor jobs
+are isolated from the outside world (and this for good reason!), such that we are not able to use cloud-hosted
+DB services such as Amazon Web Services (AWS). Instead, we can host our own database on a virtual machine (VM)
+using <a class="reference external" href="https://clouddocs.web.cern.ch/index.html">CERN OpenStack resources</a>, which can be reached within the network by the HTCondor jobs. While Orion supports a variety of different database, MongoDB, a document-based
+NoSQL database is the recommended backend for large-scale parallel optimizations, where the number of workers gets higher than 50.
+You can find out more about the database in the <a class="reference external" href="https://docs.mongodb.com/">MongoDB documentation</a>. You can follow these (easy) steps to get a working set-up:</p>
+<ol class="arabic simple">
+<li><p><a class="reference internal" href="vm.html#vm"><span class="std std-ref">Set-up a VM using CERN OpenStack resources</span></a></p></li>
+<li><p><a class="reference internal" href="db.html#db"><span class="std std-ref">Set-up a MongoDB instance on the VM</span></a></p></li>
+<li><p>Configure Orion</p></li>
+</ol>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, The ATLAS Collaboration.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
