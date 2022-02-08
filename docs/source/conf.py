@@ -2,7 +2,7 @@
 
 # -- Project information
 
-project = 'Orion@ATLAS'
+project = 'Orion in ATLAS'
 copyright = '2022, The ATLAS Collaboration'
 author = 'The ATLAS Collaboration'
 
