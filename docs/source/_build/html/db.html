@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>&lt;no title&gt; &mdash; Orion in ATLAS 0.1 documentation</title>
+  <title>Setting up you MongoDB &mdash; Orion in ATLAS 0.1 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -41,8 +41,9 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Welcome</span></p>
-<ul>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="vm.html">Setting up your Virtual Machine</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Setting up you MongoDB</a></li>
 </ul>
 
         </div>
@@ -59,7 +60,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>&lt;no title&gt;</li>
+      <li>Setting up you MongoDB</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/db.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -69,7 +70,20 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <span class="target" id="db"></span>
+  <section id="setting-up-you-mongodb">
+<span id="db"></span><h1>Setting up you MongoDB<a class="headerlink" href="#setting-up-you-mongodb" title="Permalink to this headline"></a></h1>
+<p>In order to set up your MongoDB instance on your Virtual Machine (VM), please see the MongoDB <a class="reference external" href="https://docs.mongodb.com/manual/installation/">installation documentation</a>, specifically for <a class="reference external" href="https://docs.mongodb.com/manual/tutorial/install-mongodb-on-red-hat/">CentOS</a>.</p>
+<p>Most importantly, make sure that you either deactivate the SELinux policy by setting <code class="docutils literal notranslate"><span class="pre">SELINUX</span></code> to <code class="docutils literal notranslate"><span class="pre">disabled</span></code> in <code class="docutils literal notranslate"><span class="pre">/etc/selinux/config</span></code> and re-boot your VM or make the suggested adjustments to the SELinux policy in order to allow MongoDB access to <code class="docutils literal notranslate"><span class="pre">/sys/fs/cgroup</span></code> and <code class="docutils literal notranslate"><span class="pre">/proc/net/netstat</span></code>, which is required for MongoDB to function properly (recommended). <strong>Ignoring this step will inevitably lead to permission issues.</strong></p>
+<p>Once you installed your MongoDB instance, you can check the proper functioning by starting a <a class="reference external" href="https://docs.mongodb.com/mongodb-shell/#mongodb-binary-bin.mongosh">MongoDB Shell</a> using <code class="docutils literal notranslate"><span class="pre">mongosh</span></code>. In order for the MongoDB instance to be reachable through <code class="docutils literal notranslate"><span class="pre">lxplus</span></code> and <code class="docutils literal notranslate"><span class="pre">HTCondor</span></code>, you need to deactivate the firewall using</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ firewall-cmd --zone<span class="o">=</span>public --add-service<span class="o">=</span>mongodb
+$ firewall-cmd --zone<span class="o">=</span>public --permanent --add-service<span class="o">=</span>mongodb
+</pre></div>
+</div>
+</div></blockquote>
+<p>Moreover, you should set <code class="docutils literal notranslate"><span class="pre">net.bindIpAll:</span> <span class="pre">true</span></code> and <code class="docutils literal notranslate"><span class="pre">net.maxIncomingConnections:</span> <span class="pre">1048576</span></code> in your MongoDB config file <code class="docutils literal notranslate"><span class="pre">/etc/mongod.conf</span></code>. While the first option makes sure that you will have access to the DB through the HTCondor jobs, the second option increases the number of maximum allowed incomming connections.</p>
+</section>
+
 
            </div>
           </div>
